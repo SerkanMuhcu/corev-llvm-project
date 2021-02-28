@@ -162,6 +162,18 @@ static DecodeStatus DecodeVRRegisterClass(MCInst &Inst, uint64_t RegNo,
   return MCDisassembler::Success;
 }
 
+static DecodeStatus DecodeCorevV2RegisterClass(MCInst &Inst, uint64_t RegNo,
+                                                 uint64_t Address,
+                                                 const void *Decoder) {
+  return DecodeGPRRegisterClass(Inst, RegNo, Address, Decoder);
+}
+
+static DecodeStatus DecodeCorevV4RegisterClass(MCInst &Inst, uint64_t RegNo,
+                                                 uint64_t Address,
+                                                 const void *Decoder) {
+  return DecodeGPRRegisterClass(Inst, RegNo, Address, Decoder);
+}
+
 static DecodeStatus decodeVMaskReg(MCInst &Inst, uint64_t RegNo,
                                    uint64_t Address, const void *Decoder) {
   Register Reg = RISCV::NoRegister;
@@ -366,6 +378,18 @@ DecodeStatus RISCVDisassembler::getInstruction(MCInst &MI, uint64_t &Size,
       return MCDisassembler::Fail;
     }
     Insn = support::endian::read16le(Bytes.data());
+
+    if (!STI.getFeatureBits()[RISCV::FeatureExtXCoreVSimd]) {
+      LLVM_DEBUG(
+          dbgs() << "Trying COREV_SIMD32 table (32-bit Instruction):\n");
+      // Calling the auto-generated decoder function.
+      Result = decodeInstruction(DecoderTableCOREV_SIMD32, MI, Insn, Address,
+                                 this, STI);
+      if (Result != MCDisassembler::Fail) {
+        Size = 4;
+        return Result;
+      }
+    }
 
     if (!STI.getFeatureBits()[RISCV::Feature64Bit]) {
       LLVM_DEBUG(

@@ -341,3 +341,32 @@ def VM : RegisterClass<"RISCV", VMaskVT.types, 64, (add
 def VMV0 : RegisterClass<"RISCV", VMaskVT.types, 64, (add V0)> {
   let Size = 64;
 }
+
+// Vector Register Classes for the CORE-V SIMD Instructions.
+// These Classes differ from GPR only in the value type.
+
+def CorevV2 : RegisterClass<"RISCV", [v2i16], 32, (add
+    (sequence "X%u", 10, 17),
+    (sequence "X%u", 5, 7),
+    (sequence "X%u", 28, 31),
+    (sequence "X%u", 8, 9),
+    (sequence "X%u", 18, 27),
+    (sequence "X%u", 0, 4)
+  )> {
+  let RegInfos = RegInfoByHwMode<
+      [RV32,              RV64,              DefaultMode],
+      [RegInfo<32,32,32>, RegInfo<64,64,64>, RegInfo<32,32,32>]>;
+}
+
+def CorevV4 : RegisterClass<"RISCV", [v4i8], 32, (add
+    (sequence "X%u", 10, 17),
+    (sequence "X%u", 5, 7),
+    (sequence "X%u", 28, 31),
+    (sequence "X%u", 8, 9),
+    (sequence "X%u", 18, 27),
+    (sequence "X%u", 0, 4)
+  )> {
+  let RegInfos = RegInfoByHwMode<
+      [RV32,              RV64,              DefaultMode],
+      [RegInfo<32,32,32>, RegInfo<64,64,64>, RegInfo<32,32,32>]>;
+}
