@@ -190,11 +190,19 @@ def HasExtXCoreVMac
     : Predicate<"Subtarget->hasExtXCoreVMac()">,
                AssemblerPredicate<(any_of FeatureExtXCoreVMac),
                "'Xcorevmac' (Multiply-Accumulate)">;
+// CORE-V SIMD Extension
+def FeatureExtXCoreVSimd
+    : SubtargetFeature<"xcorevsimd", "HasExtXCoreVSimd", "true",
+                       "'Xcorevsimd' (Vector Operations)">;
+def HasExtXCoreVSimd
+    : Predicate<"Subtarget->hasExtXCoreVSimd()">,
+               AssemblerPredicate<(any_of FeatureExtXCoreVSimd),
+               "'Xcorevsimd' (Vector Operations)">;
 // All CORE-V extensions
 def FeatureExtXCoreV
     : SubtargetFeature<"xcorev", "HasExtXCoreV", "true",
                        "'Xcorev' (CORE-V extensions)",
-                       [FeatureExtXCoreVHwlp, FeatureExtXCoreVMac]>;
+                       [FeatureExtXCoreVHwlp, FeatureExtXCoreVMac, FeatureExtXCoreVSimd]>;
 def HasExtXCoreV : Predicate<"Subtarget->hasExtXCoreV()">,
                               AssemblerPredicate<(all_of FeatureExtXCoreV),
                               "'Xcorev' (CORE-V extensions)">;

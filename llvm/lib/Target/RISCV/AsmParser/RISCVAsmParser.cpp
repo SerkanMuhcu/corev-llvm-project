@@ -575,6 +575,20 @@ public:
     return IsValid && VK == RISCVMCExpr::VK_RISCV_None;
   }
 
+  bool isCVUImm6() const {
+    int64_t Imm;
+    RISCVMCExpr::VariantKind VK = RISCVMCExpr::VK_RISCV_None;
+    if (!isImm())
+      return false;
+    bool IsConstantImm = evaluateConstantImm(getImm(), Imm, VK);
+    bool IsValid;
+    if (!IsConstantImm)
+      IsValid = RISCVAsmParser::classifySymbolRef(getImm(), VK, Imm);
+    else
+      IsValid = isUInt<6>(Imm);
+    return IsValid && VK == RISCVMCExpr::VK_RISCV_None;
+  }
+
   bool isCVUImm12() const {
     int64_t Imm;
     RISCVMCExpr::VariantKind VK = RISCVMCExpr::VK_RISCV_None;
@@ -1282,6 +1296,9 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_InvalidCVUImm5: {
     return generateImmOutOfRangeError(Operands, ErrorInfo, 0, (1 << 5) - 2,
                                       "immediate must be an even integer in the range");
+  }
+  case Match_InvalidCVUImm6: {
+    return generateImmOutOfRangeError(Operands, ErrorInfo, 0, (1 << 6) - 1);
   }
   case Match_InvalidCVUImm12: {
     return generateImmOutOfRangeError(Operands, ErrorInfo, 0, (1 << 12) - 2,

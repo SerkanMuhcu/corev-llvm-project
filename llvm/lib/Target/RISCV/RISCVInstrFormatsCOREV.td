@@ -113,3 +113,34 @@ class RVInstMac16I<bits<2> funct2, bits<3> funct3, dag outs, dag ins,
   let Inst{11-7} = rd;
   let Opcode = OPC_CUSTOM2.Value;
 }
+
+class RVInstSimd<bits<7> funct7, bits<3> funct3, dag outs, dag ins,
+                 string opcodestr, string argstr, list<dag> pattern>
+    : RVInst<outs, ins, opcodestr, argstr, pattern, InstFormatOther> {
+  bits<5> rs2;
+  bits<5> rs1;
+  bits<5> rd;
+
+  let Inst{31-25} = funct7;
+  let Inst{24-20} = rs2;
+  let Inst{19-15} = rs1;
+  let Inst{14-12} = funct3;
+  let Inst{11-7} = rd;
+  let Opcode = OPC_OP_V.Value;
+}
+
+class RVInstSimd_sci<bits<6> funct6, bits<3> funct3, dag outs, dag ins,
+                     string opcodestr, string argstr, list<dag> pattern>
+    : RVInst<outs, ins, opcodestr, argstr, pattern, InstFormatOther> {
+  bits<6> Imm6;
+  bits<5> rs1;
+  bits<5> rd;
+
+  let Inst{31-26} = funct6;
+  let Inst{25}    = Imm6{0};
+  let Inst{24-20} = Imm6{5-1};
+  let Inst{19-15} = rs1;
+  let Inst{14-12} = funct3;
+  let Inst{11-7} = rd;
+  let Opcode = OPC_OP_V.Value;
+}
